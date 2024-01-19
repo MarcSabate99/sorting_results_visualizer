@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="title">Sorting Results Visualizer</h1>
+        <div class="horizontal__container">
+            <input class="js_file file__uploader" type="file" name="file" accept=".csv, application/csv">
+            <button class="button js__visualize">Visualize</button>
+        </div>
+        <div id="results">
+            <div class="horizontal__container">
+                <button class="button js__horizontal__view">Horizontal view</button>
+                <button class="button js__vertical__view">Columns view</button>
+            </div>
+            <div class="horizontal__container" id="views">
+                <div class="view js_horizontal_view">
+                </div>
+                <div class="view column__container js_column_view">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tooltip">
+        <span class="tooltip-text">Click to copy the url</span>
+        <button class="button button--share js__share">Share</button>
+    </div>
+{% endblock %}
