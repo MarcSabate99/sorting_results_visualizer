@@ -1,0 +1,37 @@
+version: '3.3'
+
+services:
+  sorting_app_database:
+    container_name: sorting_app_database
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: sorting_app
+      MYSQL_USER: sorting_app
+      MYSQL_PASSWORD: sorting_app
+    ports:
+      - '4307:3306'
+    volumes:
+      - ./.docker/sorting_app/mysql:/var/lib/mysql
+  sorting_app:
+      container_name: sorting_app
+      build:
+        context: ./.docker/sorting_app
+      ports:
+        - '9000:9000'
+      volumes:
+        - ./:/var/www/sorting_app
+      depends_on:
+        - sorting_app_database
+  sorting_app_nginx:
+      container_name: sorting_app_nginx
+      image: nginx:stable-alpine
+      ports:
+        - '8080:80'
+      volumes:
+        - ./:/var/www/sorting_app
+        - ./.docker/sorting_app/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      depends_on:
+        - sorting_app
+        - sorting_app_database
