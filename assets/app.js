@@ -11,8 +11,9 @@ $(document).ready(function () {
         $('.js_column_view').show();
         $('.js_horizontal_view').hide()
     });
+    const $shareBtn = $('.js__share');
 
-    $('.js__share').on('click', function () {
+    $shareBtn.on('click', function () {
         let urlToCopy = $(this).data("url");
         let tempTextarea = $("<textarea>");
         tempTextarea.val(urlToCopy);
@@ -47,38 +48,111 @@ $(document).ready(function () {
     }
 
     $('.js__visualize').on('click', function () {
-       let files = $('.js_file')[0].files;
-       let formData = new FormData();
-       let file = files[0];
-       if(typeof file === "undefined") {
-           Swal.fire({
-               title: 'Error!',
-               text: "No file provided",
-               icon: 'error',
-               confirmButtonText: 'Ok'
-           })
-           return;
-       }
-       formData.append('file', file, file.name);
-       $.ajax({
-           type: 'POST',
-           url: '/generate/visualizer',
-           data: formData,
-           contentType: false,
-           processData: false,
-           success: function(response) {
-               loadPage(response)
-           },
-           error: function(error) {
-               Swal.fire({
-                   title: 'Error!',
-                   text: error.message,
-                   icon: 'error',
-                   confirmButtonText: 'Ok'
-               })
-           }
-       });
+        resetCurrentSorting();
+        readCSV();
     })
+
+    function resetCurrentSorting() {
+        const url = new URL(window.location.href);
+        const path = url.pathname;
+        let newPath = path.substring(0, path.lastIndexOf('/'));
+        if (!newPath.endsWith('/')) {
+            newPath += '/';
+        }
+        window.history.replaceState({}, document.title, url.origin + newPath);
+        $('.js__share').hide();
+    }
+
+    function createShareButton(data) {
+        $.ajax({
+            type: 'POST',
+            url: '/generate/visualizer',
+            data: JSON.stringify(data),
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                $('.js__share').data('url', response.sortingShareUrl);
+                $('.js__share').show();
+            }
+        })
+    }
+
+    function readCSV() {
+        const file = $('.js_file')[0].files[0];
+        if (!file) {
+            Swal.fire({
+                title: 'Error!',
+                text: "No file provided",
+                icon: 'error',
+                confirmButtonText: 'Ok'
+            })
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+            const content = event.target.result;
+            const data = parseCSV(content);
+            if (checkRequiredFields(data)) {
+                const transformedData = transformToJSON(data);
+                let elements = {elements: transformedData};
+                loadPage(elements)
+                createShareButton(elements)
+            } else {
+                Swal.fire({
+                    title: 'Error!',
+                    text: "Missing required fields: title or imageUrl",
+                    icon: 'error',
+                    confirmButtonText: 'Ok'
+                })
+            }
+        };
+
+        reader.readAsText(file);
+    }
+    function checkRequiredFields(data) {
+        for (const row of data) {
+            if (!row.title || !row.imageUrl) {
+                return false;
+            }
+        }
+        return true;
+    }
+    function parseCSV(csvContent) {
+        const data = [];
+        const lines = csvContent.trim().split('\n');
+        const keys = lines.shift().split(',');
+
+        for (const line of lines) {
+            const values = line.split(',');
+            const transformedRow = Object.fromEntries(keys.map((key, index) => [key, values[index]]));
+            data.push(transformedRow);
+        }
+        return data;
+    }
+
+    function transformToJSON(data) {
+        const transformedData = [];
+
+        for (const row of data) {
+            const jsonRow = {
+                title: row.title,
+                imageUrl: row.imageUrl,
+                others: {}
+            };
+
+            for (const key in row) {
+                if (key !== "title" && key !== "imageUrl") {
+                    jsonRow.others[key.trim()] = row[key];
+                }
+            }
+            transformedData.push(jsonRow);
+        }
+
+        return transformedData;
+    }
+
     function showTooltip() {
         const $toolTipText = $(".tooltip .tooltip-text");
         $toolTipText.text("URL copied!");
@@ -92,13 +166,15 @@ $(document).ready(function () {
     }
     function getOtherFields(item) {
         return Object.keys(item.others).map(function (key) {
-            return `<p>${key}:  ${item.others[key]}</p>`;
+            if(key !== "highlighted") {
+                return `<p>${key}:  ${item.others[key]}</p>`;
+            }
         }).join('');
     }
 
     function getHighlighted(item) {
         let highlighted = 'box';
-        if (item.highlighted === "1") {
+        if (item.others.highlighted.trim() === "1") {
             highlighted = 'box-highlighted'
         }
         return highlighted;
@@ -137,8 +213,8 @@ $(document).ready(function () {
 
     function loadPage(data) {
         const {$horizontalView, $columnView} = showElements();
-        $('.js__share').data('url', data.sortingShareUrl)
-        data.data.forEach(function(item) {
+        $('.js__share').data('url', data.sortingShareUrl);
+        data.elements.forEach(function(item) {
             let columnItem = renderColumn(item);
             $columnView.append(columnItem);
             let horizontalItem = renderHorizontal(item);
@@ -147,17 +223,18 @@ $(document).ready(function () {
     }
 
     function renderData(){
-        let urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('data')) {
-            let data = urlParams.get('data');
-            let jsonData = JSON.parse(data)
-            let realData = {}
-            if(typeof jsonData !== "undefined" && jsonData != null && jsonData.length > 0) {
-                realData.data = jsonData
-                realData.sortingShareUrl = window.location.href
-                loadPage(realData);
-            }
+        const sortingData = $('#sorting_data').val()
+        const data  = JSON.parse(sortingData);
+        if(data.length === 0) {
+            return;
         }
+        let realData = {}
+        realData.elements = JSON.parse(sortingData)
+        realData.sortingShareUrl = window.location.href
+        loadPage(realData);
+        $shareBtn.data('url', realData.sortingShareUrl);
+        $shareBtn.show();
     }
+
     renderData()
 });
