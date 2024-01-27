@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\Application\Command\Sorting;
+namespace App\Application\Command;
 
 
 class SortingUrlGeneratorCommand
 {
     public function __construct(
-        public array $data,
+        public array $elements,
         public string $originalUrl
     ) {
     }

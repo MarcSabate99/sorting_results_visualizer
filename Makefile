@@ -4,6 +4,9 @@ up:
 down:
 	docker-compose down
 
+restart:
+	make down up
+
 install:
 	docker-compose up --build --detach
 	docker exec -it sorting_app composer install
