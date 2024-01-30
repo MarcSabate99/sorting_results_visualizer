@@ -25,6 +25,11 @@ test-integration:
 test-e2e:
 	docker exec -it sorting_app php vendor/bin/behat
 
+test-all:
+	docker exec -it sorting_app php vendor/bin/phpunit --testsuite unit
+	docker exec -it sorting_app php vendor/bin/phpunit --testsuite integration
+	docker exec -it sorting_app php vendor/bin/behat
+
 format:
 	docker exec -it sorting_app vendor/bin/php-cs-fixer fix src
 	docker exec -it sorting_app vendor/bin/php-cs-fixer fix tests
