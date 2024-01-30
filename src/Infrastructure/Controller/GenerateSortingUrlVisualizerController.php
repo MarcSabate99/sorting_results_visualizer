@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Controller;
 
 use App\Application\Command\SortingUrlGeneratorCommand;
@@ -11,22 +13,21 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Throwable;
 
 class GenerateSortingUrlVisualizerController extends AbstractController
 {
     private const REQUIRED_FIELDS = [
-        'elements'
+        'elements',
     ];
+
     public function __construct(
-        private SortingUrlGenerator $sortingUrlGenerator,
-        private UrlGeneratorInterface $urlGenerator,
-        private RequestValidation $requestValidation
-    )
-    {
+        private readonly SortingUrlGenerator $sortingUrlGenerator,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RequestValidation $requestValidation
+    ) {
     }
 
-    #[Route('/generate/visualizer', name: 'generate_visualizer')]
+    #[Route('/generate/visualizer', name: 'generate_visualizer', methods: ['POST'])]
     public function index(Request $request): JsonResponse
     {
         try {
@@ -40,13 +41,12 @@ class GenerateSortingUrlVisualizerController extends AbstractController
             );
 
             return $this->json([
-                'sortingShareUrl' => $sortingShareUrl
+                'sortingShareUrl' => $sortingShareUrl,
             ]);
-        } catch (Throwable $exception) {
+        } catch (\Throwable $exception) {
             return $this->json([
                 'message' => $exception->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
     }
 }

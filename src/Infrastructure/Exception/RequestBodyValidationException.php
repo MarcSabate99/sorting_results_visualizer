@@ -1,15 +1,15 @@
 <?php
 
+declare(strict_types=1);
 
 namespace App\Infrastructure\Exception;
 
-
-use Exception;
-
-class RequestBodyValidationException extends Exception
+class RequestBodyValidationException extends \Exception
 {
-    public static function ofRequiredParam(string $parameter) {
-        $message = sprintf("Parameter %s is required", $parameter);
+    public static function ofRequiredParam(string $parameter): self
+    {
+        $message = sprintf('Parameter %s is required', $parameter);
+
         return new self($message);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Application\Service;
 
 use App\Application\Command\SortingUrlGeneratorCommand;
@@ -12,13 +14,16 @@ readonly class SortingUrlGenerator
     public function __construct(
         private SortingRepositoryInterface $sortingRepository,
         private DataValidator $dataValidator
-    )
-    {
+    ) {
     }
 
     public function handle(
         SortingUrlGeneratorCommand $command
     ): string {
+        if (empty($command->elements)) {
+            return $command->originalUrl;
+        }
+
         $this->dataValidator->handle($command->elements);
         $data = json_encode($command->elements);
         $sorting = (new Sorting())
@@ -33,6 +38,6 @@ readonly class SortingUrlGenerator
             $id = $sorting->getId()->toRfc4122();
         }
 
-        return $command->originalUrl . $id;
+        return $command->originalUrl.$id;
     }
 }

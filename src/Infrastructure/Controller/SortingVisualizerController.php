@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
 namespace App\Infrastructure\Controller;
-
 
 use App\Application\Command\SortingGetterCommand;
 use App\Application\Service\SortingGetter;
@@ -12,11 +12,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class SortingVisualizerController extends AbstractController
 {
-
     public function __construct(
-        private SortingGetter $sortingGetter
-    )
-    {
+        private readonly SortingGetter $sortingGetter
+    ) {
     }
 
     #[Route('/{id}', name: 'index', defaults: ['id' => null])]
@@ -25,10 +23,10 @@ class SortingVisualizerController extends AbstractController
         $elements = [
             'elements' => json_encode(
                 []
-            )
+            ),
         ];
 
-        if($id !== null) {
+        if (null !== $id) {
             $elements = $this->sortingGetter->handle(
                 new SortingGetterCommand($id)
             );

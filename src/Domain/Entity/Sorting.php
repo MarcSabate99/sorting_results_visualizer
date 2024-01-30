@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Domain\Entity;
 
 use App\Infrastructure\Repository\SortingRepository;
@@ -14,7 +16,7 @@ class Sorting
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private ?Uuid  $id = null;
+    private ?Uuid $id = null;
 
     #[ORM\Column(length: 1000000)]
     private ?string $data = null;
@@ -47,6 +49,12 @@ class Sorting
     public function setDataHash(?string $dataHash): self
     {
         $this->dataHash = $dataHash;
+
         return $this;
+    }
+
+    public function setId(?Uuid $id): void
+    {
+        $this->id = $id;
     }
 }
