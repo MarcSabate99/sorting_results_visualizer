@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Repository;
 
 use App\Domain\Entity\Sorting;
@@ -28,7 +30,6 @@ class SortingRepository extends ServiceEntityRepository implements SortingReposi
         $this->getEntityManager()->flush();
     }
 
-
     public function getById(string $id): ?Sorting
     {
         return $this->find($id);
@@ -37,7 +38,7 @@ class SortingRepository extends ServiceEntityRepository implements SortingReposi
     public function getByHash(string $hashedData): ?Sorting
     {
         return $this->findOneBy([
-            'dataHash' => $hashedData
+            'dataHash' => $hashedData,
         ]);
     }
 }

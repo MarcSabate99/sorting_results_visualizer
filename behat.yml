@@ -1,0 +1,16 @@
+default:
+  extensions:
+    FriendsOfBehat\SymfonyExtension:
+      kernel:
+        class: App\Kernel
+      bootstrap: tests/bootstrap.php
+    Behat\MinkExtension:
+      sessions:
+        symfony:
+          symfony: ~
+  suites:
+    default:
+      paths:
+        - tests/e2e/
+      contexts:
+        - App\Tests\e2e\Context\SortingContext
