@@ -89,8 +89,17 @@ $(document).ready(function () {
             return;
         }
 
-        const reader = new FileReader();
+        if(file.type !== "text/csv") {
+            Swal.fire({
+                title: 'Error!',
+                text: "Invalid file type",
+                icon: 'error',
+                confirmButtonText: 'Ok'
+            })
+            return;
+        }
 
+        const reader = new FileReader();
         reader.onload = function (event) {
             const content = event.target.result;
             const data = parseCSV(content);
@@ -137,14 +146,14 @@ $(document).ready(function () {
 
         for (const row of data) {
             const jsonRow = {
-                title: row.title,
-                imageUrl: row.imageUrl,
+                title: row.title.replace(/"/g, ''),
+                imageUrl: row.imageUrl.replace(/"/g, ''),
                 others: {}
             };
 
             for (const key in row) {
                 if (key !== "title" && key !== "imageUrl") {
-                    jsonRow.others[key.trim()] = row[key];
+                    jsonRow.others[key.trim()] = row[key].replace(/"/g, '');
                 }
             }
             transformedData.push(jsonRow);
