@@ -48,7 +48,7 @@ html,body {
     flex-wrap: wrap;
 }
 #results {
-    margin-top: 50px;
+    margin-top: 30px;
     display: none;
 }
 #views {
@@ -142,4 +142,7 @@ html,body {
         width: 100px;
         display: none;
     }
+}
+.how__works {
+    text-align: center;
 }
