@@ -103,6 +103,15 @@ $(document).ready(function () {
         reader.onload = function (event) {
             const content = event.target.result;
             const data = parseCSV(content);
+            if (data === null) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: "There is an error in your csv",
+                    icon: 'error',
+                    confirmButtonText: 'Ok'
+                })
+                return;
+            }
             if (checkRequiredFields(data)) {
                 const transformedData = transformToJSON(data);
                 let elements = {elements: transformedData};
@@ -132,9 +141,11 @@ $(document).ready(function () {
         const data = [];
         const lines = csvContent.trim().split('\n');
         const keys = lines.shift().split(',');
-
         for (const line of lines) {
             const values = line.split(',');
+            if(keys.length !== values.length) {
+                return null;
+            }
             const transformedRow = Object.fromEntries(keys.map((key, index) => [key, values[index]]));
             data.push(transformedRow);
         }
@@ -146,14 +157,14 @@ $(document).ready(function () {
 
         for (const row of data) {
             const jsonRow = {
-                title: row.title.replace(/"/g, ''),
-                imageUrl: row.imageUrl.replace(/"/g, ''),
+                title: row.title.replace(/"/g, '').replace(/'/g, ''),
+                imageUrl: row.imageUrl.replace(/"/g, '').replace(/'/g, ''),
                 others: {}
             };
 
             for (const key in row) {
                 if (key !== "title" && key !== "imageUrl") {
-                    jsonRow.others[key.trim()] = row[key].replace(/"/g, '');
+                    jsonRow.others[key.trim()] = row[key].replace(/"/g, '').replace(/'/g, '');
                 }
             }
             transformedData.push(jsonRow);
