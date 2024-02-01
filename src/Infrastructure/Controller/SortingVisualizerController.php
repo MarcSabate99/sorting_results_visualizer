@@ -25,12 +25,14 @@ class SortingVisualizerController extends AbstractController
                 []
             ),
         ];
+        try {
+            if (null !== $id) {
+                $elements = $this->sortingGetter->handle(
+                    new SortingGetterCommand($id)
+                );
+            }
+        } catch (\Throwable $exception) {}
 
-        if (null !== $id) {
-            $elements = $this->sortingGetter->handle(
-                new SortingGetterCommand($id)
-            );
-        }
 
         return $this->render('sorting.html.twig', $elements);
     }

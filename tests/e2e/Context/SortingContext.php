@@ -70,9 +70,9 @@ class SortingContext extends MinkContext implements Context
         $sorting->setDataHash($dataHashed);
         $this->sortingRepository->save($sorting);
 
-        $existent = $this->sortingRepository->getById($sorting->getId()->toRfc4122());
+        $existent = $this->sortingRepository->getById($sorting->getId());
         assertNotNull($existent);
-        $this->id = $sorting->getId()->toRfc4122();
+        $this->id = $sorting->getId();
     }
 
     /**

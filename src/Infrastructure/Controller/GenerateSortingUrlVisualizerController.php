@@ -19,6 +19,10 @@ class GenerateSortingUrlVisualizerController extends AbstractController
     private const REQUIRED_FIELDS = [
         'elements',
     ];
+    private const REQUIRED_INTERNAL_FIELDS = [
+        'title',
+        'imageUrl',
+    ];
 
     public function __construct(
         private readonly SortingUrlGenerator $sortingUrlGenerator,
@@ -31,7 +35,12 @@ class GenerateSortingUrlVisualizerController extends AbstractController
     public function index(Request $request): JsonResponse
     {
         try {
-            $this->requestValidation->validateInternalFields($request, self::REQUIRED_FIELDS);
+            $this->requestValidation->validateInternalFields(
+                $request,
+                self::REQUIRED_FIELDS,
+            self::REQUIRED_INTERNAL_FIELDS
+            );
+
             $body = json_decode($request->getContent(), true);
             $sortingShareUrl = $this->sortingUrlGenerator->handle(
                 new SortingUrlGeneratorCommand(
