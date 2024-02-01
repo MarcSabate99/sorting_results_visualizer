@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0QPSTJ41HP"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-0QPSTJ41HP');
+    </script>
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
@@ -9,6 +18,7 @@
         {{ encore_entry_script_tags('app') }}
     {% endblock %}
     <title>Sorting Results Visualizer</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
 {% block body %}
