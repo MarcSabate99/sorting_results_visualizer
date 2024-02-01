@@ -6,7 +6,6 @@ use App\Application\Command\SortingUrlGeneratorCommand;
 use App\Application\Service\SortingUrlGenerator;
 use App\Domain\Entity\Sorting;
 use App\Domain\Interface\SortingRepositoryInterface;
-use App\Domain\Service\DataValidator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Uid\Uuid;
 
@@ -19,11 +18,9 @@ class SortingUrlGeneratorTest extends TestCase
     {
         parent::setUp();
         $this->sortingRepository = $this->createMock(SortingRepositoryInterface::class);
-        $dataValidator = new DataValidator();
 
         $this->sortingUrlGenerator = new SortingUrlGenerator(
             $this->sortingRepository,
-            $dataValidator
         );
     }
 

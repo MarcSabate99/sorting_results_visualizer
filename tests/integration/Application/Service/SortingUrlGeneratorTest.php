@@ -5,7 +5,6 @@ namespace App\Tests\integration\Application\Service;
 use App\Application\Command\SortingUrlGeneratorCommand;
 use App\Application\Service\SortingUrlGenerator;
 use App\Domain\Entity\Sorting;
-use App\Domain\Service\DataValidator;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SortingUrlGeneratorTest extends KernelTestCase
@@ -21,7 +20,6 @@ class SortingUrlGeneratorTest extends KernelTestCase
         $sortingRepository = $entityManager->getRepository(Sorting::class);
         $this->sortingUrlGenerator = new SortingUrlGenerator(
             $sortingRepository,
-            new DataValidator()
         );
     }
 
@@ -42,6 +40,6 @@ class SortingUrlGeneratorTest extends KernelTestCase
             )
         );
 
-        $this->assertEquals('http://localhost/018d521e-a2b1-7039-aba2-1915acb3f433', $url);
+        $this->assertEquals('http://localhost/7c5a217f-6369-4eaa-bf6d-98daaf8e8dbc', $url);
     }
 }

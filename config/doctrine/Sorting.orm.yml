@@ -1,0 +1,20 @@
+App\Domain\Entity\Sorting:
+  type: entity
+  table: sorting
+  repositoryClass: App\Infrastructure\Repository\SortingRepository
+
+  id:
+    id:
+      type: uuid
+      generator:
+        strategy: CUSTOM
+      customIdGenerator:
+        class: Ramsey\Uuid\Doctrine\UuidGenerator
+
+  fields:
+    data:
+      type: text
+      length: 1000000
+
+    dataHash:
+      type: string

@@ -4,27 +4,15 @@ declare(strict_types=1);
 
 namespace App\Domain\Entity;
 
-use App\Infrastructure\Repository\SortingRepository;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Types\UuidType;
-use Symfony\Component\Uid\Uuid;
-
-#[ORM\Entity(repositoryClass: SortingRepository::class)]
 class Sorting
 {
-    #[ORM\Id]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    private ?Uuid $id = null;
+    private ?string  $id = null;
 
-    #[ORM\Column(length: 1000000)]
     private ?string $data = null;
 
-    #[ORM\Column]
     private ?string $dataHash = null;
 
-    public function getId(): ?Uuid
+    public function getId(): ?string
     {
         return $this->id;
     }
@@ -53,7 +41,7 @@ class Sorting
         return $this;
     }
 
-    public function setId(?Uuid $id): void
+    public function setId(?string $id): void
     {
         $this->id = $id;
     }
